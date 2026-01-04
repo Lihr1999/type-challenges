@@ -24,17 +24,17 @@
 
 // 2025.12.03 11:09:53
 /*
-  反思: 
+  反思:
   1. 可以使用infer关键字从一个类型中推断出想要的类型，TS会自动查找对应类型中的T，就是infer对应的推断类型
 */
 
 /**
-  知识点: 
+  知识点:
   1. TS递归
     1.1 常用在extends中，只需要在一个类型中重复调用自身类型，并且传入对应参数即可  type xx<T> = T extends x ? xx<T> : never
   2. infer推断
     2.1 TypeScript 会自动在类型的泛型定义中 T 被使用的位置，寻找实际类型中对应位置的类型，并赋值给 infer R
-    泛型T推断自动寻找对应类型例子: 
+    泛型T推断自动寻找对应类型例子:
     interface Confusing<T> {
       method: (arg: { data: T }) => T
     }
@@ -45,17 +45,17 @@
     type R1 = Case1 extends Confusing<infer R> ? R : never // R = number
     type R2 = Case2 extends Confusing<infer R> ? R : never // 不匹配 R = never
 
-*/
+ */
 
 // type MyAwaited<T> = T extends Promise<infer R> ? MyAwaited<R> : T extends PromiseLike<infer U> ? U : T // issues
-// type MyAwaited<T> = T extends PromiseLike<infer R> ? MyAwaited<R> : T // issues
+// type MyAwaited<T> = T extends PromiseLike<infer R> ? MyAwaited<R> : T // issues - 需要使用PromiseLike，否则类似{ then: xx }这种promise结构的，无法进行推断
 
 // 思路: 先限制T需要传入为PromiseLike，然后推断取出promise的返回值类型R，再判断R是否为PromiseLike，是 则递归判断，不是 则就返回R
 type MyAwaited<T extends PromiseLike<any>> = T extends PromiseLike<infer R> ? R extends PromiseLike<any> ? MyAwaited<R> : R : never // issues - https://github.com/type-challenges/type-challenges/issues/24969
 
 /*
-  myself: 
-    
+  myself:
+
   type generatePromise<T extends promiseLike> = T['then'] extends (callback: (arg: infer R) => any) => any ? R : never
 
   type result = generatePromise<typeof test> // number
