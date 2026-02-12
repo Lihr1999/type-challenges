@@ -1,0 +1,87 @@
+/*
+  3 - 实现 Omit
+  -------
+  by Anthony Fu (@antfu) #中等 #union #built-in
+
+  ### 题目
+
+  不使用 `Omit` 实现 TypeScript 的 `Omit<T, K>` 泛型。
+
+  `Omit` 会创建一个省略 `K` 中字段的 `T` 对象。
+
+  例如：
+
+  ```ts
+  interface Todo {
+    title: string
+    description: string
+    completed: boolean
+  }
+
+  type TodoPreview = MyOmit<Todo, 'description' | 'title'>
+
+  const todo: TodoPreview = {
+    completed: false,
+  }
+  ```
+
+  > 在 Github 上查看：https://tsch.js.org/3/zh-CN
+*/
+
+/* _____________ 你的代码 _____________ */
+
+// 2025.12.08 16:28:21
+/*
+  知识点: 
+  1. as 使用 “as” 语法重新映射键类型: 
+    1.1 https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-1.html#key-remapping-in-mapped-types
+*/
+
+// myself
+type MyOmit<T, U extends keyof T> = {
+  [k in keyof T as k extends U ? never : k]: T[k]
+}
+
+/* _____________ 测试用例 _____________ */
+import type { Equal, Expect } from '@type-challenges/utils'
+
+type cases = [
+  Expect<Equal<Expected1, MyOmit<Todo, 'description'>>>,
+  Expect<Equal<Expected2, MyOmit<Todo, 'description' | 'completed'>>>,
+  Expect<Equal<Expected3, MyOmit<Todo1, 'description' | 'completed'>>>,
+]
+
+// @ts-expect-error
+type error = MyOmit<Todo, 'description' | 'invalid'>
+
+interface Todo {
+  title: string
+  description: string
+  completed: boolean
+}
+
+interface Todo1 {
+  readonly title: string
+  description: string
+  completed: boolean
+}
+
+interface Expected1 {
+  title: string
+  completed: boolean
+}
+
+interface Expected2 {
+  title: string
+}
+
+interface Expected3 {
+  readonly title: string
+}
+
+/* _____________ 下一步 _____________ */
+/*
+  > 分享你的解答：https://tsch.js.org/3/answer/zh-CN
+  > 查看解答：https://tsch.js.org/3/solutions
+  > 更多题目：https://tsch.js.org/zh-CN
+*/
