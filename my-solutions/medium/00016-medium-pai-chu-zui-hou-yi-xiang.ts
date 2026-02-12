@@ -28,8 +28,8 @@
 
 // 2025.12.16 11:03:56
 /*
-  知识点:
-  1. 数组推断解构 ...infer
+  知识点: 
+  1. 数组推断解构 ...infer 
     T extends [infer R, ...infer Rest] 或者 T extends [...infer Rest, infer _]
   2. _短横线前缀占位符，防止出现TS警告
     注意infer推断时，不使用的类型会出现警告，建议使用"_"占位
@@ -37,9 +37,9 @@
 */
 
 type Pop<T extends unknown[]> = T['length'] extends 0 ? [] : T extends [...infer R, infer _] ? R : never // myself
-type Shfit<T extends unknown[]> = T['length'] extends 0 ? [] : T extends [infer _, ...infer Rest] ? Rest : never // myself
-type Push<T extends unknown[], U> = [...T, U] // myself
-type Unshift<T extends unknown[], U> = [U, ...T] // myself
+type Shfit<T extends unknown[]> = T['length'] extends 0 ? [] : T extends [infer _, ...infer Rest] ? Rest : never  // myself
+type Push<T extends unknown[], U extends unknown> = [...T, U] // myself
+type Unshift<T extends unknown[], U extends unknown> = [U, ...T] // myself
 
 // type Pop<T extends any[]> = T extends [...infer FirstSet, infer _] ? FirstSet : T // issues - 只要不符合条件，返回T
 

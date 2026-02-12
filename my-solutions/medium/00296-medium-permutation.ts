@@ -19,7 +19,14 @@
 // 2025.12.30 15:34:17
 /*
   知识点: 
-  1. 分配式(分布式)
+  1. 分配式(分布式) 
+    自动分布条件: 
+      - 泛型
+      - 联合类型
+      - 等号右侧 + 泛型参数 写在extends左侧
+        - 泛型参数需要是裸类型参数
+      - 每个extends条件都是独立判断的，针对泛型参数都是根据以上的自动分配条件进行重新判断
+
     1.1 解除分配律, 使用[T]包裹泛型参数产生非裸类型参数 - 自动解除
       type Wrapped<T> = [T] extends [never] ? [] : [T]
       type Result = Wrapped<'a' | 'b'> // ['a' | 'b']
@@ -41,8 +48,14 @@
       type Permutation<T, U = T> = T extends any ? [T, ...Permutation<Exclude<U, T>>] : never
       type Result = Permutation<'B' | 'C'> // never
 
-    1.6 每个extends条件判断中，泛型类型都是重新判断是否满足自动分配条件
+    1.6 每个extends条件判断中，泛型类型都是单独判断是否满足自动分配条件
+      // 第一个extends条件判断([T] extends [never])，使用了非裸类型，所以T不具备自动分配
+      // 第二个extends条件判断(any extends T)，T不在extends左侧，所以不具备自动分配，['a' | 'b']
+      type Permutation<T, U = T> = [T] extends [never] ? [] : any extends T ? [T] : never
+
+    1.7: 泛型类型参数 extends xx ? - 只有写在extends左侧的泛型类型参数才具有自动分配效果
 */
+
 /*
   思路:
   错误的初始思路: 
@@ -110,7 +123,7 @@
   : never
 */
 
-type Permutation<T, U = T> = [T] extends [never] ? [] : T extends any ? [T, ...Permutation<Exclude<U, T>>] : never // myself
+type Permutation<T, U = T> = [T] extends [never] ? [] : T extends unknown ? [T, ...Permutation<Exclude<U, T>>] : never // myself
 
 /* _____________ 测试用例 _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

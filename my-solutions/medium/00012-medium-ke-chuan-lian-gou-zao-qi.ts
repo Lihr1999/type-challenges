@@ -41,7 +41,7 @@
 
 // 2025.12.10 15:40:16
 /*
-  知识点:
+  知识点: 
   1. 泛型类型构建映射类型时，如果想让key值是具体的某个值，需要用 'in'关键字
     解释: 'in'关键字在TS中会自动展开后面的值，一般用于字符串或者联合类型，注意逻辑要写在[]里面
     // 例子
@@ -50,12 +50,12 @@
   2. @ts-expect-error - 告诉编译器该处应该产生一个类型错误。如果编译器没有发出类型错误的警告，将会报告一个编译错误。
     此处的警告是提醒: 需要约束传参的类型，补充处理never情况。如果不限制never，那么参数类型永远都符合，就导致没法预期接收一个错误，所以就会出现警告 Unused '@ts-expect-error' directive.
     option<K extends string, V>(key: K extends keyof T ? never : K, // 魔法在这里！ value: V )
-
-    注意:
+    
+    注意: 
       1. 泛型一般只会是<T extends xx>
       2. 一般来说是需要处理函数接收参数的泛型约束(xx: T extends 某类型 ? never : T)
 
-    原理:
+    原理: 
     1. 告诉TS期望这一行在编译时产生类型错误
     2. 当你的类型逻辑正确阻止重复 key 时 → 产生错误 → @ts-expect-error 满足 → 无警告
     3. 当你的类型逻辑无法阻止重复 key 时 → 无错误 → @ts-expect-error 失望 → 有警告
@@ -67,7 +67,7 @@
   1. 当递归泛型(默认值T = {})时，不需要再次遍历构建映射类型，直接返回T即可
   2. 建议补充处理函数接收参数的泛型约束
 
-  思路:
+  思路: 
   1. Chainable<T = {}>，定义为泛型，并且默认值为{}
   2. 当调用option方法时，返回值为递归调用Chainable
     2.1 处理接收参数的泛型约束
@@ -86,7 +86,7 @@
 
 // myself - 阅读AI提示(需要添加泛型约束)
 type Chainable<T = {}> = {
-  option: <K extends string, V>(key: K extends keyof T ? never : K, value: V) => Chainable<Omit<T, K> & Record<K, V>>
+  option: <K extends string, V extends unknown>(key: K extends keyof T ? never : K, value: V) => Chainable<Omit<T, K> & Record<K, V>>
   get: () => T
 }
 
