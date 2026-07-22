@@ -123,7 +123,22 @@
   : never
 */
 
-type Permutation<T, U = T> = [T] extends [never] ? [] : T extends unknown ? [T, ...Permutation<Exclude<U, T>>] : never // myself
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+type Permutation<T, U = T> = [T] extends [never] ? [] : T extends any ? [T, ...Permutation<Exclude<U, T>>] : never
 
 /* _____________ 测试用例 _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
